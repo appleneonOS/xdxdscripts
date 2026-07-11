@@ -1,10 +1,12 @@
--- [[ ANIMAL HOSPITAL – WINDUI + ALL FEATURES ]] --
+-- =================================================================
+-- ANIMAL HOSPITAL – COMPLETE CHEAT SUITE (WINDUI REAL LIBRARY)
 -- Toggle Menu: Click the draggable logo or press RightShift
+-- =================================================================
 
--- ========== 1. LOAD WINDUI ==========
-local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/refs/heads/main/main_example.lua"))()
+-- 1. LOAD REAL WINDUI (NOT the example file)
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/source.lua"))()
 
--- ========== 2. CREATE GUI CONTAINER (EARLY) ==========
+-- 2. CREATE GUI CONTAINER
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "AnimalHospitalHub"
 ScreenGui.ResetOnSpawn = false
@@ -17,7 +19,7 @@ else
     ScreenGui.Parent = game:GetService("CoreGui")
 end
 
--- ========== 3. BUILD WINDOW & TABS (IMMEDIATELY) ==========
+-- 3. CREATE MAIN WINDOW
 local Window = WindUI:CreateWindow({
     Title = "Animal Hospital",
     Icon = "stethoscope",
@@ -28,7 +30,7 @@ local Window = WindUI:CreateWindow({
     Parent = ScreenGui
 })
 
--- Create tabs (they exist now, ready for interaction)
+-- 4. CREATE TABS
 local MainTab = Window:Tab({ Title = "Main", Icon = "home" })
 local CombatTab = Window:Tab({ Title = "Combat", Icon = "sword" })
 local WorldTab = Window:Tab({ Title = "World", Icon = "globe" })
@@ -36,7 +38,9 @@ local VisualsTab = Window:Tab({ Title = "Visuals", Icon = "eye" })
 local LoaderTab = Window:Tab({ Title = "Pastebin Loader", Icon = "code" })
 local SettingsTab = Window:Tab({ Title = "Settings", Icon = "settings" })
 
--- ========== 4. NOW LOAD SERVICES & CONFIGURATIONS ==========
+-- =================================================================
+-- 5. SERVICES & CONFIGURATIONS
+-- =================================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -48,7 +52,7 @@ local ProximityPromptService = game:GetService("ProximityPromptService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- Global cheat states
+-- Cheat states
 local Cheats = {
     AutoWork = false,
     InfiniteSanity = false,
@@ -64,7 +68,6 @@ local Cheats = {
     InstantPrompts = false,
 }
 
--- Settings
 local SpeedValue = 32
 local FlySpeed = 45
 
@@ -73,8 +76,11 @@ local OriginalAmbient = Lighting.Ambient
 local OriginalOutdoor = Lighting.OutdoorAmbient
 local OriginalFog = Lighting.FogEnd
 
--- ========== 5. POPULATE TABS WITH CONTROLS ==========
--- Main Tab
+-- =================================================================
+-- 6. POPULATE TABS WITH CONTROLS
+-- =================================================================
+
+-- MAIN TAB
 MainTab:Paragraph({
     Title = "Welcome to Animal Hospital",
     Content = "Toggle cheats below. Some features require you to be in-game."
@@ -103,7 +109,7 @@ MainTab:Toggle({
 
 MainTab:Toggle({
     Title = "Auto Heartbeat Minigame",
-    Desc = "Automatically completes the heartbeat minigame when it appears",
+    Desc = "Automatically completes the heartbeat minigame",
     Value = false,
     Callback = function(state)
         Cheats.AutoHeartbeat = state
@@ -121,7 +127,7 @@ MainTab:Toggle({
     end
 })
 
--- Combat Tab
+-- COMBAT TAB
 CombatTab:Toggle({
     Title = "Spinbot (Anti-Aim)",
     Desc = "Continuously rotates your character",
@@ -129,7 +135,7 @@ CombatTab:Toggle({
     Callback = function(state) Cheats.Spinbot = state end
 })
 
--- World Tab
+-- WORLD TAB
 WorldTab:Toggle({
     Title = "Speed Modifier",
     Desc = "Changes your walkspeed",
@@ -183,7 +189,7 @@ WorldTab:Button({
     end
 })
 
--- Visuals Tab
+-- VISUALS TAB
 VisualsTab:Toggle({
     Title = "Anomaly Sensor",
     Desc = "Highlights NPCs: Red = Anomalous, Green = Normal",
@@ -222,35 +228,35 @@ VisualsTab:Toggle({
     end
 })
 
--- Loader Tab
+-- LOADER TAB
 LoaderTab:Paragraph({
     Title = "Pastebin Script Loader",
-    Content = "Paste raw Lua script code from Pastebin or other sources and click 'Execute Script' to run it."
+    Content = "Paste raw Lua code or a raw Pastebin URL to inject extra cheats."
 })
 
 LoaderTab:Textbox({
-    Title = "Script Code",
-    Desc = "Paste the raw Lua script here",
+    Title = "Lua Code",
+    Desc = "Paste raw Lua script here",
     Value = "",
     Callback = function(text) _G.pastedScript = text end
 })
 
 LoaderTab:Button({
-    Title = "Execute Script",
+    Title = "Execute Code",
     Desc = "Runs the pasted Lua code",
     Callback = function()
         local code = _G.pastedScript
         if code and code ~= "" then
             local success, err = pcall(function() loadstring(code)() end)
-            if success then print("Pasted script executed successfully!") else warn("Failed: " .. tostring(err)) end
+            if success then print("Code executed successfully!") else warn("Error: " .. tostring(err)) end
         else
-            print("Please paste some Lua code first.")
+            print("Please paste some code first.")
         end
     end
 })
 
 LoaderTab:Button({
-    Title = "Load from URL (Raw)",
+    Title = "Load from URL",
     Desc = "Fetches and runs script from a raw Pastebin URL",
     Callback = function()
         local url = _G.cheatURL
@@ -259,14 +265,14 @@ LoaderTab:Button({
                 local code = game:HttpGet(url)
                 loadstring(code)()
             end)
-            if success then print("Loaded from URL successfully!") else warn("Failed: " .. tostring(err)) end
+            if success then print("Loaded from URL!") else warn("Failed: " .. tostring(err)) end
         else
-            print("Please enter a URL in the Settings tab first.")
+            print("Enter a URL in Settings first.")
         end
     end
 })
 
--- Settings Tab
+-- SETTINGS TAB
 SettingsTab:Paragraph({
     Title = "Settings & URL Loader",
     Content = "Enter a raw Pastebin URL to load scripts remotely."
@@ -288,8 +294,11 @@ SettingsTab:Button({
     end
 })
 
--- ========== 6. FEATURE IMPLEMENTATIONS (DEFINED AFTER UI) ==========
--- Helper functions for Anomaly Sensor
+-- =================================================================
+-- 7. FEATURE IMPLEMENTATIONS
+-- =================================================================
+
+-- Anomaly Sensor Helpers
 local function HighlightNPC(instance)
     ClearHighlights(instance)
     local h = Instance.new("Highlight")
@@ -400,7 +409,9 @@ local function CleanupInstantPrompts()
     print("Instant Prompts deactivated")
 end
 
--- ========== 7. CORE CHEAT ENGINE (RUNS CONTINUOUSLY) ==========
+-- =================================================================
+-- 8. CORE LOOP (Runs every frame)
+-- =================================================================
 RunService.Stepped:Connect(function()
     local character = LocalPlayer.Character
     if not character then return end
@@ -452,7 +463,7 @@ RunService.Stepped:Connect(function()
         end
     end
 
-    -- Auto Work
+    -- Auto Work (interact with patients via proximity prompts)
     if Cheats.AutoWork then
         for _, prompt in ipairs(Workspace:GetDescendants()) do
             if prompt:IsA("ProximityPrompt") then
@@ -474,4 +485,5 @@ UserInputService.JumpRequest:Connect(function()
     end
 end)
 
+-- =================================================================
 print("Animal Hospital Hub loaded! Press RightShift to toggle menu.")
